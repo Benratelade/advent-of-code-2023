@@ -19,7 +19,7 @@ class Solver
     total = 0
 
     @numbers.each do |number|
-      total += number.value if has_adjacent_special_character(number)
+      total += number.value if part?(number)
     end
 
     total
@@ -39,9 +39,9 @@ class Solver
     end
   end
 
-  def has_adjacent_special_character(number)
+  def part?(number)
     adjacent_positions_for(number).any? do |position|
-      @matrix[position[0]][position[1]].match?(/[\*\+\#\$\=\%\-\/\@&]/)
+      @matrix[position[0]][position[1]].match?(%r{[\*\+\#\$\=\%\-/\@&]})
     end
   end
 

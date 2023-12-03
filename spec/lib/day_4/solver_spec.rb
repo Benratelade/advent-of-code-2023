@@ -50,16 +50,16 @@ RSpec.describe Solver do
 
   describe "#process_file" do
     it "iterates through each line in the file" do
-      expect(Solver).to receive(:to_matrix).with("467..114..").and_return([1])
-      expect(Solver).to receive(:to_matrix).with("...*......").and_return([2])
-      expect(Solver).to receive(:to_matrix).with("..35..633.").and_return([3])
-      expect(Solver).to receive(:to_matrix).with("......#...").and_return([4])
-      expect(Solver).to receive(:to_matrix).with("617*......").and_return([5])
-      expect(Solver).to receive(:to_matrix).with(".....+.58.").and_return([6])
-      expect(Solver).to receive(:to_matrix).with("..592.....").and_return([7])
-      expect(Solver).to receive(:to_matrix).with("......755.").and_return([8])
-      expect(Solver).to receive(:to_matrix).with("...$.*....").and_return([9])
-      expect(Solver).to receive(:to_matrix).with(".664.598..").and_return([10])
+      expect(Solver).to receive(:to_matrix).with("467..114..").and_call_original
+      expect(Solver).to receive(:to_matrix).with("...*......").and_call_original
+      expect(Solver).to receive(:to_matrix).with("..35..633.").and_call_original
+      expect(Solver).to receive(:to_matrix).with("......#...").and_call_original
+      expect(Solver).to receive(:to_matrix).with("617*......").and_call_original
+      expect(Solver).to receive(:to_matrix).with(".....+.58.").and_call_original
+      expect(Solver).to receive(:to_matrix).with("..592.....").and_call_original
+      expect(Solver).to receive(:to_matrix).with("......755.").and_call_original
+      expect(Solver).to receive(:to_matrix).with("...$.*....").and_call_original
+      expect(Solver).to receive(:to_matrix).with(".664.598..").and_call_original
 
       Solver.new.process_file("test-file.txt")
     end
@@ -82,21 +82,21 @@ RSpec.describe Solver do
     end
   end
 
-  describe "#has_adjacent_special_character" do
+  describe "#part?" do
     it "returns true if a number has adjacent characters in the matrix" do
       solver = Solver.new
       solver.process_file("test-file.txt")
 
       number = solver.numbers[0]
-      expect(solver.has_adjacent_special_character(number)).to be(true)
+      expect(solver.part?(number)).to be(true)
     end
 
     it "returns false if a number des NOT have adjacent characters in the matrix" do
       solver = Solver.new
       solver.process_file("test-file.txt")
 
-      expect(solver.has_adjacent_special_character(solver.numbers[1])).to be(false)
-      expect(solver.has_adjacent_special_character(solver.numbers[5])).to be(false)
+      expect(solver.part?(solver.numbers[1])).to be(false)
+      expect(solver.part?(solver.numbers[5])).to be(false)
     end
   end
 
