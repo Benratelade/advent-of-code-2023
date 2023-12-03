@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "day_4/solver"
+require "day_3/solver"
 require "pry"
 
 RSpec.describe Solver do
