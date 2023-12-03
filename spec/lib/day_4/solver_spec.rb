@@ -78,7 +78,7 @@ RSpec.describe Solver do
     end
 
     it "adds the id of each game that matches" do
-      expect(Solver.new.process_file("test-file.txt")).to eq(4361)
+      expect(Solver.new.process_file("test-file.txt")).to eq([4361, 467_835])
     end
   end
 
@@ -128,6 +128,42 @@ RSpec.describe Solver do
           [9, 8],
         ],
       )
+    end
+  end
+
+  describe "#get_stars_in_line" do
+    it "gets all the stars in the file" do
+      solver = Solver.new
+      solver.process_file("test-file.txt")
+
+      expect(solver.stars[0].line_index).to eq(1)
+      expect(solver.stars[0].start_index).to eq(3)
+      expect(solver.stars[0].end_index).to eq(3)
+
+      expect(solver.stars[1].line_index).to eq(4)
+      expect(solver.stars[1].start_index).to eq(3)
+      expect(solver.stars[1].end_index).to eq(3)
+
+      expect(solver.stars[2].line_index).to eq(8)
+      expect(solver.stars[2].start_index).to eq(5)
+      expect(solver.stars[2].end_index).to eq(5)
+    end
+  end
+
+  describe "#gear?" do
+    it "returns true if there are exactly 2 parts around a star" do
+      solver = Solver.new
+      solver.process_file("test-file.txt")
+
+      expect(solver.gear?(solver.stars[0])).to be(true)
+      expect(solver.gear?(solver.stars[2])).to be(true)
+    end
+
+    it "returns false if there is only 1 part around a gear" do
+      solver = Solver.new
+      solver.process_file("test-file.txt")
+
+      expect(solver.gear?(solver.stars[1])).to be(false)
     end
   end
 end

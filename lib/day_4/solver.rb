@@ -1,28 +1,35 @@
 # frozen_string_literal: true
 
 class Solver
-  attr_accessor :numbers, :matrix
+  attr_accessor :numbers, :matrix, :stars
 
   Number = Data.define(:value, :line_index, :start_index, :end_index)
+  Star = Data.define(:line_index, :start_index, :end_index, :parts)
 
   def initialize
     @numbers = []
+    @parts = Set.new
     @matrix = []
+    @stars = []
+    @gears = Set.new
   end
 
   def process_file(file)
     File.readlines(file).each_with_index do |line, index|
       @matrix << Solver.to_matrix(line.strip)
       get_numbers_in_line(line, index)
+      get_stars_in_line(line, index)
     end
-
-    total = 0
 
     @numbers.each do |number|
-      total += number.value if part?(number)
+      @parts << number if part?(number)
     end
 
-    total
+    @stars.each do |star|
+      @gears << star if gear?(star)
+    end
+
+    [@parts.sum(&:value), @gears.sum { |gear| gear.parts.to_a[0].value * gear.parts.to_a[1].value }]
   end
 
   def get_numbers_in_line(line, line_index)
@@ -41,8 +48,27 @@ class Solver
 
   def part?(number)
     adjacent_positions_for(number).any? do |position|
-      @matrix[position[0]][position[1]].match?(%r{[\*\+\#\$\=\%\-/\@&]})
+      @matrix[position[0]][position[1]].match?(%r{[*+\#$=%\-/@&]})
     end
+  end
+
+  def gear?(star)
+    surrounding_parts = Set.new
+
+    adjacent_positions_for(star).each do |position|
+      @parts.each do |part|
+        next unless part.line_index == position[0]
+
+        if (part.start_index..part.end_index).any? { |x_coord| x_coord == position[1] }
+          surrounding_parts << part
+          star.parts << part
+        end
+      end
+    end
+
+    # binding.pry if surrounding_parts.count==2
+
+    surrounding_parts.count == 2
   end
 
   def adjacent_positions_for(number)
@@ -62,6 +88,18 @@ class Solver
     (left_boundary..right_boundary).each { |x_coord| positions << [next_line_index, x_coord] } if next_line_index
 
     positions
+  end
+
+  def get_stars_in_line(line, line_index)
+    match_data = line.to_enum(:scan, /(\*)/).map { Regexp.last_match }
+    match_data.each do |match|
+      @stars << Star.new(
+        line_index: line_index,
+        start_index: match.begin(0),
+        end_index: match.begin(0),
+        parts: Set.new,
+      )
+    end
   end
 
   def self.to_matrix(line)
