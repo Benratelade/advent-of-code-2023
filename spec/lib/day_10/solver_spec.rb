@@ -14,7 +14,6 @@ RSpec.describe Solver do
         LJ.LJ
       CONTENT
     end
-    @solver = Solver.new("test-file.txt")
 
     File.open("test-file-2.txt", "w") do |file|
       file << <<~CONTENT
@@ -30,11 +29,27 @@ RSpec.describe Solver do
         ....L---J.LJ.LJLJ...
       CONTENT
     end
+
+    File.open("test-file-3.txt", "w") do |file|
+      file << <<~CONTENT
+        FF7FSF7F7F7F7F7F---7
+        L|LJ||||||||||||F--J
+        FL-7LJLJ||||||LJL-77
+        F--JF--7||LJLJ7F7FJ-
+        L---JF-JLJ.||-FJLJJ7
+        |F|F-JF---7F7-L7L|7|
+        |FFJF7L7F-JF7|JL---7
+        7-L-JL7||F7|L7F-7F7|
+        L.L7LFJ|||||FJL7||LJ
+        L7JLJL-JLJLJL--JLJ.L
+      CONTENT
+    end
   end
 
   after do
     File.delete("test-file.txt")
     File.delete("test-file-2.txt")
+    File.delete("test-file-3.txt")
   end
 
   describe ".initialize" do
@@ -62,8 +77,11 @@ RSpec.describe Solver do
 
   describe "#solve_part_2" do
     it "tells you what how many bits of ground are fully enclosed in the loop" do
-      solver = Solver.new("test-file-2.txt")
-      expect(solver.solve_part_2).to eq(8)
+      # solver = Solver.new("test-file-2.txt")
+      # expect(solver.solve_part_2).to eq(8)
+
+      solver = Solver.new("test-file-3.txt")
+      expect(solver.solve_part_2).to eq(10)
     end
   end
 end

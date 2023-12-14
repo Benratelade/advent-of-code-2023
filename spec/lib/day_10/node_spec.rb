@@ -65,24 +65,24 @@ RSpec.describe Node do
   describe ".blocking_from_direction" do
     it "returns true if the node is blocking in the given direction" do
       # 7
-      expect(Node.new(pipe_type: "7", x_coord: 0, y_coord: 0).blocking_from_direction(:west)).to be(true)
-      expect(Node.new(pipe_type: "7", x_coord: 0, y_coord: 0).blocking_from_direction(:south)).to be(true)
+      expect(Node.new(pipe_type: "7", x_coord: 0, y_coord: 0).blocking_from_direction(:west)).to be(false)
+      expect(Node.new(pipe_type: "7", x_coord: 0, y_coord: 0).blocking_from_direction(:south)).to be(false)
 
       # |
-      expect(Node.new(pipe_type: "|" , x_coord: 0, y_coord: 0).blocking_from_direction(:east)).to be(true)
-      expect(Node.new(pipe_type: "|" , x_coord: 0, y_coord: 0).blocking_from_direction(:west)).to be(true)
+      expect(Node.new(pipe_type: "|", x_coord: 0, y_coord: 0).blocking_from_direction(:east)).to be(true)
+      expect(Node.new(pipe_type: "|", x_coord: 0, y_coord: 0).blocking_from_direction(:west)).to be(true)
 
       # -
       expect(Node.new(pipe_type: "-", x_coord: 0, y_coord: 0).blocking_from_direction(:north)).to be(true)
       expect(Node.new(pipe_type: "-", x_coord: 0, y_coord: 0).blocking_from_direction(:south)).to be(true)
 
       # L
-      expect(Node.new(pipe_type: "L", x_coord: 0, y_coord: 0).blocking_from_direction(:east)).to be(true)
-      expect(Node.new(pipe_type: "L", x_coord: 0, y_coord: 0).blocking_from_direction(:north)).to be(true)
+      expect(Node.new(pipe_type: "L", x_coord: 0, y_coord: 0).blocking_from_direction(:east)).to be(false)
+      expect(Node.new(pipe_type: "L", x_coord: 0, y_coord: 0).blocking_from_direction(:north)).to be(false)
 
       # F
-      expect(Node.new(pipe_type: "F", x_coord: 0, y_coord: 0).blocking_from_direction(:south)).to be(true)
-      expect(Node.new(pipe_type: "F", x_coord: 0, y_coord: 0).blocking_from_direction(:east)).to be(true)
+      expect(Node.new(pipe_type: "F", x_coord: 0, y_coord: 0).blocking_from_direction(:south)).to be(false)
+      expect(Node.new(pipe_type: "F", x_coord: 0, y_coord: 0).blocking_from_direction(:east)).to be(false)
     end
 
     it "returns false if the node is not blocking in the given direction" do

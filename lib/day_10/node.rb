@@ -58,7 +58,12 @@ class Node
   def blocking_from_direction(direction)
     return false if pipe_type == "."
 
-    !connected_nodes.keys.include?(Node.opposite_direction(direction))
+    case direction
+    when :north, :south
+      !connected_nodes.keys.include?(:north) && !connected_nodes.keys.include?(:south)
+    when :west, :east
+      !connected_nodes.keys.include?(:west) && !connected_nodes.keys.include?(:east)
+    end
   end
 
   def self.opposite_direction(direction)
@@ -70,5 +75,16 @@ class Node
     }
 
     opposites[direction]
+  end
+
+  def self.perpendicular_directions(direction)
+    perpendiculars = {
+      north: %i[west east],
+      south: %i[west east],
+      west: %i[north south],
+      east: %i[north south],
+    }
+
+    perpendiculars[direction]
   end
 end

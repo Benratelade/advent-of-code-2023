@@ -3,12 +3,14 @@
 require_relative "node"
 
 class PipeMap # rubocop:disable Metrics/ClassLength
-  attr_accessor :loop_start, :nodes, :loop, :ground_nodes
+  attr_accessor :loop_start, :nodes, :loop, :ground_nodes, :unused_clusters, :unattached_nodes
 
   def initialize(array)
     @nodes = []
     @loop = []
-    @ground_nodes = []
+    @ground_nodes = Set.new
+    @unattached_nodes = Set.new
+    @unused_clusters = []
 
     array.each_with_index do |rows, y_index|
       @nodes << []
@@ -22,6 +24,8 @@ class PipeMap # rubocop:disable Metrics/ClassLength
 
     set_loop_start_type
     follow_path
+    set_unattached_nodes
+    set_area_clusters
   end
 
   def set_loop_start_type
@@ -56,6 +60,23 @@ class PipeMap # rubocop:disable Metrics/ClassLength
     end
   end
 
+  def set_unattached_nodes
+    @nodes.each do |row|
+      row.each do |node|
+        @unattached_nodes.add(node) unless @loop.include?(node)
+      end
+    end
+  end
+
+  def set_area_clusters
+    @unattached_nodes.each do |unused_node|
+      cluster = Set.new
+      cluster.add(unused_node)
+
+      @unused_clusters << grow_area_cluster(cluster: cluster, start_node: unused_node)
+    end
+  end
+
   def get_node_in_direction(start_node:, direction:)
     return nil unless direction
     return nil unless start_node.connected_nodes[direction]
@@ -73,6 +94,35 @@ class PipeMap # rubocop:disable Metrics/ClassLength
     return nil if outside_bounds(coordinates[:y_coord], coordinates[:x_coord])
 
     @nodes[coordinates[:y_coord]][coordinates[:x_coord]]
+  end
+
+  def get_surrounding_unused_nodes(start_node:)
+    surrounding_unused_nodes = Set.new
+
+    %i[north south east west].each do |direction|
+      surrounding_node = get_surrounding_node(start_node: start_node, direction: direction)
+      surrounding_unused_nodes << surrounding_node if surrounding_node && !@loop.include?(surrounding_node)
+    end
+
+    surrounding_unused_nodes
+  end
+
+  def grow_area_cluster(cluster:, start_node:)
+    new_nodes = []
+
+    get_surrounding_unused_nodes(start_node: start_node).each do |node|
+      next if cluster.include?(node)
+
+      new_nodes << node
+      cluster.add(node)
+      @unattached_nodes.delete(node)
+    end
+
+    new_nodes.each do |node|
+      grow_area_cluster(cluster: cluster, start_node: node)
+    end
+
+    cluster
   end
 
   def outside_bounds(y_coord, x_coord)
@@ -111,45 +161,59 @@ class PipeMap # rubocop:disable Metrics/ClassLength
   end
 
   def node_is_within_loop(node)
-    raise "Not a ground node (pipe_type should be '.')" unless node.pipe_type == "."
-
     in_loop = true
 
     %i[north south east west].each do |direction|
-      next unless in_loop
-
       start_node = node
-      next_blocking_node = next_blocking_node_in_direction(start_node: start_node, direction: direction)
+      blocked = [false, false]
 
-      next if @loop.include?(next_blocking_node)
+      all_loop_nodes_in_direction(start_node: start_node, direction: direction).each do |loop_node|
+        Node.perpendicular_directions(direction).each_with_index do |perpendicular_direction, index|
+          next if blocked[index]
 
-      while next_blocking_node || @loop.include?(start_node)
-        start_node = next_blocking_node
-        next_blocking_node = next_blocking_node_in_direction(start_node: start_node, direction: direction)
+          blocked[index] =
+            !get_node_in_direction(
+              start_node: loop_node,
+              direction: perpendicular_direction,
+            ).nil?
+        end
+
+        break if blocked.all? { |status| status == true }
       end
 
-      in_loop = false unless next_blocking_node
+      in_loop = false unless blocked.all? { |status| status == true }
     end
 
     in_loop
   end
 
-  def next_blocking_node_in_direction(start_node:, direction:)
-    blocking_node = nil
+  def next_loop_node_in_direction(start_node:, direction:)
+    loop_node = nil
     node = start_node
-    reached_edge = false
 
-    until blocking_node
+    until loop_node
       node = get_surrounding_node(start_node: node, direction: direction)
 
-      unless node
-        reached_edge = true
-        break
-      end
+      break unless node
 
-      blocking_node = node if node.blocking_from_direction(direction)
+      loop_node = node if @loop.include?(node)
     end
 
-    blocking_node
+    loop_node
+  end
+
+  def all_loop_nodes_in_direction(start_node:, direction:)
+    loop_nodes = []
+    node = start_node
+
+    until node.nil?
+      node = get_surrounding_node(start_node: node, direction: direction)
+
+      break unless node
+
+      loop_nodes << node if @loop.include?(node)
+    end
+
+    loop_nodes
   end
 end

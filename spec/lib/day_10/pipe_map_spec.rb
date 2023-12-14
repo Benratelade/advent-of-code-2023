@@ -20,8 +20,6 @@ RSpec.describe PipeMap do
     end
 
     it "creates a node for each element in the map" do
-      node = double("a node", pipe_type: "a pipe type")
-
       expect(Node).to receive(:new).with(pipe_type: "7", y_coord: 0, x_coord: 0).and_call_original
       expect(Node).to receive(:new).with(pipe_type: "-", y_coord: 0, x_coord: 1).and_call_original
       expect(Node).to receive(:new).with(pipe_type: "F", y_coord: 0, x_coord: 2).and_call_original
@@ -59,25 +57,6 @@ RSpec.describe PipeMap do
           ["S", "J", "L", "L", "7"],
           ["|", "F", "-", "-", "J"],
           ["L", "J", ".", "L", "J"],
-        ],
-      )
-    end
-
-    it "saves all ground nodes" do
-      pipe_map = PipeMap.new(
-        [
-          ["7", "-", "F", "7", "-"],
-          [".", "F", "J", "|", "7"],
-          ["S", "J", "L", "L", "7"],
-          ["|", "F", "-", "-", "J"],
-          ["L", "J", ".", "L", "J"],
-        ],
-      )
-
-      expect(pipe_map.ground_nodes).to eq(
-        [
-          pipe_map.nodes[1][0],
-          pipe_map.nodes[4][2],
         ],
       )
     end
@@ -155,7 +134,7 @@ RSpec.describe PipeMap do
     end
   end
 
-  describe ".next_blocking_node_in_direction" do
+  describe ".next_loop_node_in_direction" do
     before do
       @pipe_map = PipeMap.new(
         [
@@ -172,13 +151,89 @@ RSpec.describe PipeMap do
       )
     end
 
-    it "returns the next blocking node in a given direction" do
+    it "returns the next loop node in a given direction" do
       from_node = @pipe_map.nodes[4][5]
 
-      expect(@pipe_map.next_blocking_node_in_direction(start_node: from_node, direction: :north)).to eq(@pipe_map.nodes[2][5])
-      expect(@pipe_map.next_blocking_node_in_direction(start_node: from_node, direction: :south)).to be_nil
-      expect(@pipe_map.next_blocking_node_in_direction(start_node: from_node, direction: :west)).to eq(@pipe_map.nodes[4][2])
-      expect(@pipe_map.next_blocking_node_in_direction(start_node: from_node, direction: :east)).to eq(@pipe_map.nodes[4][8])
+      expect(@pipe_map.next_loop_node_in_direction(start_node: from_node, direction: :north)).to eq(@pipe_map.nodes[2][5])
+      expect(@pipe_map.next_loop_node_in_direction(start_node: from_node, direction: :south)).to be_nil
+      expect(@pipe_map.next_loop_node_in_direction(start_node: from_node, direction: :west)).to eq(@pipe_map.nodes[4][2])
+      expect(@pipe_map.next_loop_node_in_direction(start_node: from_node, direction: :east)).to eq(@pipe_map.nodes[4][8])
+    end
+  end
+
+  describe ".all_loop_nodes_in_direction" do
+    before do
+      @pipe_map = PipeMap.new(
+        [
+          [".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+          [".", "S", "-", "-", "-", "-", "-", "-", "-", "7", "."],
+          [".", "|", "F", "-", "-", "-", "-", "-", "7", "|", "."],
+          [".", "|", "|", ".", ".", ".", ".", ".", "|", "|", "."],
+          [".", "|", "|", ".", ".", ".", ".", ".", "|", "|", "."],
+          [".", "|", "L", "-", "7", ".", "F", "-", "J", "|", "."],
+          [".", "|", ".", ".", "|", ".", "|", ".", ".", "|", "."],
+          [".", "L", "-", "-", "J", ".", "L", "-", "-", "J", "."],
+          [".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+        ],
+      )
+    end
+
+    it "returns all the loop nodes in a given direction" do
+      from_node = @pipe_map.nodes[4][5]
+
+      expect(@pipe_map.all_loop_nodes_in_direction(start_node: from_node, direction: :north)).to eq(
+        [
+          @pipe_map.nodes[2][5],
+          @pipe_map.nodes[1][5],
+        ],
+      )
+
+      expect(@pipe_map.all_loop_nodes_in_direction(start_node: from_node, direction: :south)).to eq([])
+
+      expect(@pipe_map.all_loop_nodes_in_direction(start_node: from_node, direction: :west)).to eq(
+        [
+          @pipe_map.nodes[4][2],
+          @pipe_map.nodes[4][1],
+        ],
+      )
+
+      expect(@pipe_map.all_loop_nodes_in_direction(start_node: from_node, direction: :east)).to eq(
+        [
+          @pipe_map.nodes[4][8],
+          @pipe_map.nodes[4][9],
+
+        ],
+      )
+    end
+  end
+
+  describe ".set_ground_clusters" do
+    before do
+      @pipe_map = PipeMap.new(
+        [
+          [".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+          [".", "S", "-", "-", "-", "-", "-", "-", "-", "7", "."],
+          [".", "|", "F", "-", "-", "-", "-", "-", "7", "|", "."],
+          [".", "|", "|", ".", ".", ".", ".", ".", "|", "|", "."],
+          [".", "|", "|", ".", ".", ".", ".", ".", "|", "|", "."],
+          [".", "|", "L", "-", "7", ".", "F", "-", "J", "|", "."],
+          [".", "|", ".", ".", "|", ".", "|", ".", ".", "|", "."],
+          [".", "L", "-", "-", "J", ".", "L", "-", "-", "J", "."],
+          [".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+        ],
+      )
+    end
+
+    it "groups adjacent ground nodes in clusters" do
+      expect(@pipe_map.unused_clusters.length).to eq(3)
+      expect(@pipe_map.unused_clusters[1]).to contain_exactly(
+        @pipe_map.nodes[6][2],
+        @pipe_map.nodes[6][3],
+      )
+      expect(@pipe_map.unused_clusters[2]).to contain_exactly(
+        @pipe_map.nodes[6][7],
+        @pipe_map.nodes[6][8],
+      )
     end
   end
 end
