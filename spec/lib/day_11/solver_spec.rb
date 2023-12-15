@@ -5,7 +5,7 @@ require "pry"
 
 RSpec.describe Solver do
   before do
-    File.create("test-file.txt", "w") do |file|
+    File.open("test-file.txt", "w") do |file|
       file << <<~CONTENT
         ...#......
         .......#..
@@ -23,6 +23,27 @@ RSpec.describe Solver do
 
   after do
     File.delete("test-file.txt")
+  end
+
+  describe ".initialize" do
+    it "instantiates a map of the galaxy" do
+      expect(GalaxyMap).to receive(:new).with(
+        [
+          [".", ".", ".", "#", ".", ".", ".", ".", ".", "."],
+          [".", ".", ".", ".", ".", ".", ".", "#", ".", "."],
+          ["#", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+          [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+          [".", ".", ".", ".", ".", ".", "#", ".", ".", "."],
+          [".", "#", ".", ".", ".", ".", ".", ".", ".", "."],
+          [".", ".", ".", ".", ".", ".", ".", ".", ".", "#"],
+          [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+          [".", ".", ".", ".", ".", ".", ".", "#", ".", "."],
+          ["#", ".", ".", ".", "#", ".", ".", ".", ".", "."],
+        ],
+      )
+
+      Solver.new("test-file.txt")
+    end
   end
 
   describe "#solve_part_1" do
