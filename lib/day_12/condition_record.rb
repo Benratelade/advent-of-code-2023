@@ -18,4 +18,15 @@ class ConditionRecord
       solution.join.match(@damaged_spring_record.regex)
     end
   end
+
+  def possible_solutions_part_2
+    springs_list = @springs_list.springs.join
+    damaged_springs_record = @damaged_spring_record.quantities.join(",")
+    double_length_solutions = ConditionRecord.new("?#{springs_list} #{damaged_springs_record}")
+
+    possible_solutions_count = possible_solutions.count
+    factor = double_length_solutions.possible_solutions.count
+
+    possible_solutions_count * factor * factor * factor * factor
+  end
 end

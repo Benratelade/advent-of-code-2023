@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class DamagedSpringsRecord
+  attr_reader :quantities
+
   def initialize(quantities)
     @quantities = quantities
   end

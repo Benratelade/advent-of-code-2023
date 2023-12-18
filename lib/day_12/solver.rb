@@ -19,4 +19,10 @@ class Solver
       condition_record.possible_solutions.count
     end
   end
+
+  def solve_part_2
+    @condition_records.sum do |condition_record|
+      condition_record.possible_solutions_part_2
+    end
+  end
 end

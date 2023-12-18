@@ -46,4 +46,12 @@ RSpec.describe Solver do
       expect(solver.solve_part_1).to eq(21)
     end
   end
+
+  describe "#solve_part_2" do
+    it "returns the sum of possible combinations of broken parts" do
+      solver = Solver.new("test-file.txt")
+
+      expect(solver.solve_part_2).to eq(525_152)
+    end
+  end
 end
