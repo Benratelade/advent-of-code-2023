@@ -3,7 +3,6 @@
 require_relative "condition_record"
 
 class Solver
-
   attr_accessor :condition_records
 
   def initialize(file)
@@ -21,8 +20,6 @@ class Solver
   end
 
   def solve_part_2
-    @condition_records.sum do |condition_record|
-      condition_record.possible_solutions_part_2
-    end
+    @condition_records.sum(&:possible_solutions_part_2)
   end
 end

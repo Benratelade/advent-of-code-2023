@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
+require_relative "damaged_springs_record"
 class SpringsList
   attr_accessor :springs, :unknown_springs
 
-  def initialize(characters)
+  def initialize(characters, damaged_springs_record)
     @springs = characters
+    @damaged_springs_record = damaged_springs_record
 
     set_unknown_springs
   end
@@ -25,7 +27,7 @@ class SpringsList
       permutation.each do |character|
         new_permutation[new_permutation.index("?")] = character
       end
-      solutions << new_permutation
+      solutions << new_permutation if new_permutation.join.match(@damaged_springs_record.regex)
     end
 
     solutions
