@@ -6,6 +6,21 @@ RSpec.describe Solver do
   before do
     File.open("test-file.txt", "w") do |file|
       file << <<~FILE_CONTENT
+        #.##..##.
+        ..#.##.#.
+        ##......#
+        ##......#
+        ..#.##.#.
+        ..##..##.
+        #.#.##.#.
+
+        #...##..#
+        #....#..#
+        ..##..###
+        #####.##.
+        #####.##.
+        ..##..###
+        #....#..#
       FILE_CONTENT
     end
   end
