@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "day_14/solver"
 require "pry"
 
@@ -29,6 +30,15 @@ RSpec.describe Solver do
       solver = Solver.new("test-file.txt")
 
       expect(solver.solve_part_1).to eq(136)
+    end
+  end
+
+  describe ".solve_part_2" do
+    it "calculates the answer to part 2" do
+      solver = Solver.new("test-file.txt")
+
+      expect(solver.solve_part_2).to eq(64)
+      ## 91286 is the correct answer for part 2
     end
   end
 end

@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/AbcSize,Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity
 class RocksMap
-  attr_accessor :geography
+  attr_accessor :geography, :initial_configuration
 
   def initialize(string)
     @geography = []
@@ -9,20 +10,57 @@ class RocksMap
     string.split("\n").each do |row|
       @geography << row.chars
     end
+
+    @initial_configuration = Marshal.load(Marshal.dump(@geography))
   end
 
-  def tilt(_direction = :north)
-    @geography.each_with_index do |row, row_index|
-      next if row_index.zero?
+  def reset
+    @geography = @initial_configuration
 
-      row.each_with_index do |rock, rock_index|
-        next if rock == "#"
-        next if rock == "."
-        next if @geography[row_index - 1][rock_index] == "O"
-        next if @geography[row_index - 1][rock_index] == "#"
+    self
+  end
 
-        @geography[row_index - 1][rock_index] = rock
-        row[rock_index] = "."
+  def tilt(direction)
+    if %i[north south].include?(direction)
+      offset = direction == :north ? -1 : 1
+      range = if direction == :north
+                (1..(@geography.length - 1)).to_a
+              else
+                (0..(@geography.length)).to_a.reverse
+              end
+
+      range.each do |row_index|
+        next if @geography[row_index + offset].nil?
+
+        row = @geography[row_index]
+        row.each_with_index do |rock, rock_index|
+          next unless rock == "O"
+          next if @geography[row_index + offset][rock_index] == "O"
+          next if @geography[row_index + offset][rock_index] == "#"
+
+          @geography[row_index + offset][rock_index] = rock
+          row[rock_index] = "."
+        end
+      end
+
+    else
+      offset = direction == :west ? -1 : 1
+      range = if direction == :west
+                (1..(@geography[0].length - 1)).to_a
+              else
+                (0...(@geography[0].length - 1)).to_a.reverse
+              end
+
+      @geography.each do |row|
+        range.each do |rock_index|
+          rock = row[rock_index]
+          next unless rock == "O"
+          next if row[rock_index + offset] == "O"
+          next if row[rock_index + offset] == "#"
+
+          row[rock_index + offset] = rock
+          row[rock_index] = "."
+        end
       end
     end
 
@@ -35,6 +73,14 @@ class RocksMap
       tilt(direction)
 
       break if before_tilt == @geography
+    end
+
+    self
+  end
+
+  def spin_cycle
+    %i[north west south east].each do |direction|
+      tilt_all_the_way(direction)
     end
 
     self
