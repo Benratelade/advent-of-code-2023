@@ -216,4 +216,17 @@ class PipeMap # rubocop:disable Metrics/ClassLength
 
     loop_nodes
   end
+
+  def print_map
+    @nodes.each do |row|
+      row.each_with_index do |node, index|
+        if @loop.include?(node)
+          print "\e[32m#{node.pipe_type}\e[0m"
+        else
+          print "\e[35m#{node.pipe_type}\e[0m"
+        end
+        print "\n" if index == row.length - 1
+      end
+    end
+  end
 end

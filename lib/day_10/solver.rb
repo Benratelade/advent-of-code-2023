@@ -16,6 +16,7 @@ class Solver
   end
 
   def solve_part_1
+    @map.print_map
     length = @map.loop.length
 
     length.even? ? length / 2 : ((length - 1) / 2) + 1
