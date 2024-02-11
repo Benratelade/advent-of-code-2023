@@ -20,9 +20,11 @@ class Solver
     @hailstones.each_with_index do |hailstone, index|
       (index + 1..@hailstones.length - 1).each do |secondary_index|
         intersection = hailstone.hailstone_intesection(@hailstones[secondary_index])
-        if intersection[:intersects] == :future && (interval.include?(intersection[:x_intersection]) && interval.include?(intersection[:y_intersection]))
-          sum += 1
-        end
+        next unless intersection[:intersects] == :future &&
+                    (interval.include?(intersection[:x_intersection]) &&
+                    interval.include?(intersection[:y_intersection]))
+
+        sum += 1
       end
     end
 

@@ -26,7 +26,11 @@ class ConditionRecord
 
     possible_solutions.all? do |solution|
       last_match_data = solution.join.to_enum(:scan, @damaged_spring_record.regex).map { Regexp.last_match }[0]
-      last_match_data.begin(last_match_data.to_a.length - 1) == last_match_data_first_solution.begin(last_match_data_first_solution.to_a.length - 1)
+      last_match_data.begin(
+        last_match_data.to_a.length - 1,
+      ) == last_match_data_first_solution.begin(
+        last_match_data_first_solution.to_a.length - 1,
+      )
     end
   end
 
@@ -35,7 +39,9 @@ class ConditionRecord
     damaged_springs_record = @damaged_spring_record.quantities.join(",")
 
     possible_solutions_count = possible_solutions.count
-    double_solution = ConditionRecord.new("#{springs_list}?#{springs_list} #{damaged_springs_record},#{damaged_springs_record}")
+    double_solution = ConditionRecord.new(
+      "#{springs_list}?#{springs_list} #{damaged_springs_record},#{damaged_springs_record}",
+    )
     factor = double_solution.possible_solutions.count / possible_solutions_count
     # first_half_solutions = ConditionRecord.new("#{springs_list}? #{damaged_springs_record}")
     # second_half_solutions = ConditionRecord.new("?#{springs_list} #{damaged_springs_record}")

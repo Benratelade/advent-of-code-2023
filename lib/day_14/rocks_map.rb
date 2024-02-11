@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/AbcSize,Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity
+# rubocop:disable Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity
 class RocksMap
   attr_accessor :geography, :initial_configuration
 
