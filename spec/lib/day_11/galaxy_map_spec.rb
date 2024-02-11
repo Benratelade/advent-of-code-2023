@@ -66,7 +66,7 @@ RSpec.describe GalaxyMap do
       expect(
         GalaxyMap.correct_for_expansion(
           [
-            [".", "#"], 
+            [".", "#"],
             [".", "#"],
           ],
         ),

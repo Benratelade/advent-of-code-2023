@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "day_24/solver"
 require "pry"
 

@@ -45,7 +45,7 @@ class Hailstone
     x_intersection = (hailstone.y_coefficient - y_coefficient) / divide_by
     y_intersection = (x_intersection * slope) + y_coefficient
 
-    intersects = if (coordinate_in_future?(x_intersection) && hailstone.coordinate_in_future?(x_intersection))
+    intersects = if coordinate_in_future?(x_intersection) && hailstone.coordinate_in_future?(x_intersection)
                    :future
                  else
                    :past

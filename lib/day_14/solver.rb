@@ -33,7 +33,7 @@ class Solver
     @rocks_map.reset
 
     number_of_repeated_transformations = (1_000_000_000 - matching_iteration.first[0]) % (last_iteration.first[0] - matching_iteration.first[0])
-    (matching_iteration.first[0] + number_of_repeated_transformations).times do |iteration|
+    (matching_iteration.first[0] + number_of_repeated_transformations).times do |_iteration|
       @rocks_map.spin_cycle
     end
 

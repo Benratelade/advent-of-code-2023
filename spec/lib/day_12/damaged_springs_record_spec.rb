@@ -8,7 +8,7 @@ RSpec.describe DamagedSpringsRecord do
       damaged_springs_record = DamagedSpringsRecord.new([1, 1, 3])
 
       expect(damaged_springs_record.regex).to eq(
-        Regexp.new(/^\.*[#]{1}[.]+[#]{1}[.]+[#]{3}[.]*$/),
+        /^\.*[#]{1}[.]+[#]{1}[.]+[#]{3}[.]*$/,
       )
     end
   end

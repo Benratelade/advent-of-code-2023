@@ -33,7 +33,7 @@ class ConditionRecord
   def possible_solutions_part_2
     springs_list = @springs_list.springs.join
     damaged_springs_record = @damaged_spring_record.quantities.join(",")
-    
+
     possible_solutions_count = possible_solutions.count
     double_solution = ConditionRecord.new("#{springs_list}?#{springs_list} #{damaged_springs_record},#{damaged_springs_record}")
     factor = double_solution.possible_solutions.count / possible_solutions_count

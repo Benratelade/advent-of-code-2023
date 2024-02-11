@@ -83,6 +83,7 @@ class Solver
 
     @seeds.each_with_index do |seed_start, index|
       next if index.odd?
+
       puts "Seed starting: #{seed_start}"
 
       (seed_start..seed_start + @seeds[index + 1]).to_a.each do |actual_seed|

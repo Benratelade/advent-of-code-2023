@@ -13,8 +13,7 @@ RSpec.describe ConditionRecord do
       expect(SpringsList).to receive(:new).with(
         ["?", "?", "?", ".", "#", "#", "#"],
         damaged_spring_record,
-        ).and_return(springs_list)
-
+      ).and_return(springs_list)
 
       ConditionRecord.new("???.### 1,1,3")
     end
@@ -110,7 +109,7 @@ RSpec.describe ConditionRecord do
 
       condition_record = ConditionRecord.new(".??..??...?##. 1,1,3")
       expect(condition_record.possible_solutions_part_2).to eq(16_384)
-      
+
       condition_record = ConditionRecord.new("???????#??.???#? 2,2,4,3")
       expect(condition_record.possible_solutions_part_2).to eq(1250)
 

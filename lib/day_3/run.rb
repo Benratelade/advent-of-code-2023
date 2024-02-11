@@ -5,5 +5,5 @@ require "./lib/day_3/solver"
 require "pry"
 
 solver = Solver.new
-solution = solver.process_file('./lib/day_3/input.txt')
+solution = solver.process_file("./lib/day_3/input.txt")
 puts "solution: parts: #{solution[0]}, gears: #{solution[1]}"

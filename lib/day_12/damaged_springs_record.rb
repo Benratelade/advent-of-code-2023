@@ -12,7 +12,7 @@ class DamagedSpringsRecord
 
     @quantities.each_with_index do |quantity, index|
       expression += "([#]{#{quantity}})"
-      expression += (index == @quantities.count - 1) ? "[.]*$" : "[.]+"
+      expression += index == @quantities.count - 1 ? "[.]*$" : "[.]+"
     end
 
     /#{expression}/

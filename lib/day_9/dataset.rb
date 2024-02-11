@@ -15,7 +15,7 @@ class Dataset
     until equilibrium_reached
       sequence = Dataset.next_sequence(sequence)
       sequences << sequence
-      equilibrium_reached = true if sequence.all? { |number| number == 0 }
+      equilibrium_reached = true if sequence.all?(&:zero?)
     end
 
     sequences

@@ -48,11 +48,11 @@ class Solver
 
   def solve_part_2
     z_nodes = []
-    @starting_points.each_with_index do |starting_point, index|
+    @starting_points.each_with_index do |starting_point, _index|
       z_nodes << get_next_z_node(starting_point, 0)
     end
 
-    z_nodes.map {|node| node[:steps]}.reduce(&:lcm)
+    z_nodes.map { |node| node[:steps] }.reduce(&:lcm)
   end
 
   def get_next_z_node(starting_node, steps_count)

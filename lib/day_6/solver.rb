@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Solver
   attr_accessor :races, :race
 
